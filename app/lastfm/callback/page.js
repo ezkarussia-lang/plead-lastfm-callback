@@ -1,3 +1,5 @@
+export const runtime = "nodejs";
+
 import crypto from "crypto";
 import mongoose from "mongoose";
 
