@@ -3,10 +3,10 @@ export const runtime = "nodejs";
 import crypto from "crypto";
 import mongoose from "mongoose";
 
-const API_KEY = process.env.LASTFM_API_KEY;
-const API_SECRET = process.env.LASTFM_API_SECRET;
-const MONGO_URI = process.env.MONGO_URI;
-const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
+const API_KEY = (process.env.LASTFM_API_KEY || "").trim();
+const API_SECRET = (process.env.LASTFM_API_SECRET || "").trim();
+const MONGO_URI = (process.env.MONGO_URI || "").trim();
+const DISCORD_TOKEN = (process.env.DISCORD_TOKEN || "").trim();
 
 const stateSchema = new mongoose.Schema({
   stateId: { type: String, required: true, unique: true },
@@ -61,8 +61,7 @@ async function sendDM(discordId, username, scrobbles) {
             color: 0xb90000,
             author: {
               name: "Last.fm Connected",
-              icon_url:
-                "https://www.last.fm/static/images/lastfm_avatar_twitter.png",
+              icon_url: "https://www.last.fm/static/images/lastfm_avatar_twitter.png",
             },
             description: [
               `✅ Your Last.fm account **${username}** has been linked to Plead.`,
@@ -148,7 +147,7 @@ export default async function CallbackPage({ searchParams }) {
     const api_sig = sign(params);
 
     const lfRes = await fetch(
-      `https://ws.audioscrobbler.com/2.0/?method=auth.getSession&api_key=${encodeURIComponent(API_KEY)}&token=${encodeURIComponent(token)}&api_sig=${api_sig}&format=json`
+      `https://ws.audioscrobbler.com/2.0/?method=auth.getSession&api_key=${encodeURIComponent(API_KEY)}&token=${encodeURIComponent(token)}&api_sig=${encodeURIComponent(api_sig)}&format=json`
     ).then((r) => r.json());
 
     if (lfRes.error) {
@@ -157,7 +156,7 @@ export default async function CallbackPage({ searchParams }) {
           icon="❌"
           success={false}
           heading="Authentication Failed"
-          body={lfRes.message || "Last.fm rejected the token. Try again."}
+          body={`${lfRes.message || "Last.fm rejected the token."} (error ${lfRes.error})`}
         />
       );
     }
