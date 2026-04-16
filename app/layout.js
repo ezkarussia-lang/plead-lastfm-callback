@@ -1,4 +1,4 @@
-export const metadata = { title: "Plead · Last.fm" };
+export const metadata = { title: "Contoured · Last.fm" };
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
