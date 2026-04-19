@@ -1,4 +1,4 @@
-export const metadata = { title: "Contoured · Last.fm" };
+export const metadata = { title: "Contoured" };
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
@@ -16,7 +16,7 @@ export default function RootLayout({ children }) {
           .heading-success{font-size:24px;font-weight:700;margin-bottom:10px;color:#b90000}
           .heading-error{font-size:24px;font-weight:700;margin-bottom:10px;color:#666}
           p{color:#aaa;font-size:15px;line-height:1.6;margin-bottom:6px}
-          .tag{display:inline-flex;align-items:center;gap:6px;background:#b90000;color:#fff;
+          .tag{display:inline-flex;align-items:center;gap:6px;color:#fff;
             padding:6px 16px;border-radius:20px;font-size:13px;font-weight:600;margin-top:20px}
           .footer{color:#888;font-size:13px;margin-top:16px}
           strong{color:#fff}
