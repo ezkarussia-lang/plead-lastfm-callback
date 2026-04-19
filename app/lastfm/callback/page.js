@@ -61,7 +61,8 @@ async function sendDM(discordId, username, scrobbles) {
             color: 0xb90000,
             author: {
               name: "Last.fm Connected",
-              icon_url: "https://www.last.fm/static/images/lastfm_avatar_twitter.png",
+              icon_url:
+                "https://www.last.fm/static/images/lastfm_avatar_twitter.png",
             },
             description: [
               `✅ Your Last.fm account **${username}** has been linked to Contoured.`,
@@ -70,7 +71,7 @@ async function sendDM(discordId, username, scrobbles) {
               "",
               "You can now use `,np` to show what you're listening to.",
             ].join("\n"),
-            footer: { text: "Plead · last.fm" },
+            footer: { text: "Contoured · last.fm" },
           },
         ],
       }),
@@ -85,13 +86,15 @@ function Card({ success, icon, heading, body, showTag }) {
       <h1 className={success ? "heading-success" : "heading-error"}>{heading}</h1>
       <p dangerouslySetInnerHTML={{ __html: body }} />
       {showTag && <div className="tag">✓ last.fm connected</div>}
-      <p className="footer">Plead · last.fm integration</p>
+      <p className="footer">Contoured · last.fm integration</p>
     </div>
   );
 }
 
 export default async function CallbackPage({ searchParams }) {
-  const { token, state } = await searchParams;
+  const params = await searchParams;
+  const token = params.token;
+  const state = params.state;
 
   if (!token || !state) {
     return (
@@ -143,11 +146,15 @@ export default async function CallbackPage({ searchParams }) {
       );
     }
 
-    const params = { api_key: API_KEY, method: "auth.getSession", token };
-    const api_sig = sign(params);
+    const params2 = { api_key: API_KEY, method: "auth.getSession", token };
+    const api_sig = sign(params2);
 
     const lfRes = await fetch(
-      `https://ws.audioscrobbler.com/2.0/?method=auth.getSession&api_key=${encodeURIComponent(API_KEY)}&token=${encodeURIComponent(token)}&api_sig=${encodeURIComponent(api_sig)}&format=json`
+      `https://ws.audioscrobbler.com/2.0/?method=auth.getSession&api_key=${encodeURIComponent(
+        API_KEY
+      )}&token=${encodeURIComponent(token)}&api_sig=${encodeURIComponent(
+        api_sig
+      )}&format=json`
     ).then((r) => r.json());
 
     if (lfRes.error) {
@@ -167,7 +174,9 @@ export default async function CallbackPage({ searchParams }) {
     let scrobbles = 0;
     try {
       const info = await fetch(
-        `https://ws.audioscrobbler.com/2.0/?method=user.getinfo&user=${encodeURIComponent(username)}&api_key=${encodeURIComponent(API_KEY)}&format=json`
+        `https://ws.audioscrobbler.com/2.0/?method=user.getinfo&user=${encodeURIComponent(
+          username
+        )}&api_key=${encodeURIComponent(API_KEY)}&format=json`
       ).then((r) => r.json());
       scrobbles = parseInt(info.user?.playcount || "0");
     } catch {}
@@ -186,7 +195,7 @@ export default async function CallbackPage({ searchParams }) {
         icon="🎵"
         success={true}
         heading={`Welcome, ${username}!`}
-        body="Your Last.fm account has been linked.<br/>Check your Discord DMs — Plead has sent you a confirmation.<br/><br/>You can close this tab."
+        body="Your Last.fm account has been linked.<br/>Check your Discord DMs — Contoured has sent you a confirmation.<br/><br/>You can close this tab."
         showTag={true}
       />
     );
@@ -196,7 +205,7 @@ export default async function CallbackPage({ searchParams }) {
         icon="❌"
         success={false}
         heading="Something went wrong"
-        body={err.message || "Unknown error. Please try again."}
+        body={String(err?.message || err).replace(/[<>]/g, "") || "Unknown error. Please try again."}
       />
     );
   }
